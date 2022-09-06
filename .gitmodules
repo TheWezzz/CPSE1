@@ -4,3 +4,6 @@
 [submodule "bmptk"]
 	path = bmptk
 	url = https://github.com/ManDeJan/bmptk
+[submodule "rtos"]
+	path = rtos
+	url = https://github.com/ManDeJan/rtos.git
