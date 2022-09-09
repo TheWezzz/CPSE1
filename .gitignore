@@ -11,3 +11,6 @@ compressed.txt
 *.mk
 *.exe
 bmptk_*_stack.c
+_cc_flags
+_cpp_flags
+_linker_flags
