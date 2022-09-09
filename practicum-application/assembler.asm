@@ -17,10 +17,11 @@ done:
     pop { r5, pc }
 
 string:
-    .word Hello world, the ANSWER is 42! @[]`{}~\n
+    .word "Hello world, the ANSWER is 42! @[]`{}~"
 
 application:
-    push r0
-    str r0, string
+    push {r0}
+    ldr r0, =string
     bl print_asciz
+    pop {r0}
 
