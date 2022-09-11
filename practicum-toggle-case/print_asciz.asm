@@ -10,6 +10,7 @@ loop:
     ldrb r0, [ r5 ]
     add r0, r0, #0
     beq done
+    bl toggle_case
     bl uart_put_char
     add r5, r5, #1
     b loop
