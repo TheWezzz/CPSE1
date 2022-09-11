@@ -9,7 +9,7 @@
 #############################################################################
 
 # source files in this project (main.cpp is automatically assumed)
-SOURCES := assembler.asm
+SOURCES := print_asciz.asm application.asm
 
 # header files in this project
 HEADERS :=

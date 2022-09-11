@@ -1,11 +1,11 @@
 #include "hwlib.hpp"
 
 extern "C" {
+void application();
 void print_asciz(const char* s);
 void uart_put_char(char c) {
     hwlib::cout << c;
 }
-void application();
 }
 
 int main(void) {

@@ -1,7 +1,7 @@
 .cpu cortex-m0
 .text
-.align 2
 .global print_asciz
+.align 2
 
 print_asciz:
     push { r5, lr }
@@ -15,13 +15,3 @@ loop:
     b loop
 done:
     pop { r5, pc }
-
-string:
-    .word "Hello world, the ANSWER is 42! @[]`{}~"
-
-application:
-    push {r0}
-    ldr r0, =string
-    bl print_asciz
-    pop {r0}
-
