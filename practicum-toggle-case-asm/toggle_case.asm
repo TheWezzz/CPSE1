@@ -21,7 +21,7 @@ check_upper2:
     b check_lower1
 
 check_lower1:
-    sub r6, #'a'
+    sub r6, r6, #'a'
     bge check_lower2
     b done
 
