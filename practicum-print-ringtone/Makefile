@@ -21,6 +21,9 @@ SOURCES += note_player_gpio.cpp
 HEADERS += rtttl_player.hpp
 SOURCES += rtttl_player.cpp
 
+HEADERS += note_player_pc.hpp
+SOURCES += note_player_pc.cpp
+
 # other places to look for files for this project
 SEARCH  := 
 

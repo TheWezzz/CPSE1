@@ -1,5 +1,6 @@
 #include "hwlib.hpp"
 #include "note_player_gpio.hpp"
+#include "note_player_pc.hpp"
 #include "fur_elise.hpp"
 #include "rtttl_player.hpp"
 
@@ -13,7 +14,7 @@ int main( void ){
    
    namespace target = hwlib::target;   
    auto lsp = target::pin_out( target::pins::d7 );
-   auto p = note_player_gpio( lsp );
+   auto p = note_player_pc( lsp );
    hwlib::wait_ms( 10 );
    
    HWLIB_TRACE;
