@@ -11,12 +11,8 @@
 
 class note_player_pc
         : public note_player {
-private:
-    hwlib::pin_out& lsp;
 public:
-    note_player_pc(hwlib::pin_out& lsp)
-            :
-            lsp( lsp ){}
+    note_player_pc(){};
 
     void play(const note& n) override;
 };

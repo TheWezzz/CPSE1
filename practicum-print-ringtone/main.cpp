@@ -10,16 +10,16 @@ const char muppets[]      = "Muppets:d=4,o=5,b=250:c6,c6,a,b,8a,b,g,p,c6,c6,a,8b
 const char rickroll[]     = "Never gonna give you up:d=4,o=5,b=120:16c,16d,16f,16d,16a.,16p,32p,8a,16p,g.,16c,16d,16f,16d,16g.,16p,32p,8g,16p,8f.,16e,8d,16c,16d,16f,16d,f,8g,8e.,16d,8c,8c4,8c,8g,8p,2f,16c,16d,16f,16d,16a.,16p,32p,8a,16p,g.,16c,16d,16f,16d,c6,8e,8f.,16e,8d,16c,16d,16f,16d,f,8g,8e.,16d,8c,8c4,8c,8g,8p,2f";
 const char one[]          = "NumberOne:d=16,o=5,b=168:4f.,8c6,16b5,16c6,16b5,16c6,8b5,8c6,4g#5,4f.,8f,8g#5,8c6,4c#6,4g#5,4c#6,4d#6,8c6,8c#6,8c6,8c#6,2c6";
 
-int main( void ){	
+int main( void ){
    
    namespace target = hwlib::target;   
    auto lsp = target::pin_out( target::pins::d7 );
-   auto p = note_player_pc( lsp );
+   auto p = note_player_pc();
    hwlib::wait_ms( 10 );
    
    HWLIB_TRACE;
    
-   if( 1 ){
+   if( 0 ){
       auto fe = fur_elise();
       fe.play( p );
    }      
@@ -28,5 +28,5 @@ int main( void ){
    if( 0 ){ rtttl_play( p, let_it_be );  }
    if( 0 ){ rtttl_play( p, muppets );  }
    if( 0 ){ rtttl_play( p, rickroll );  }
-   if( 0 ){ rtttl_play( p, one );  }
+   if( 1 ){ rtttl_play( p, one );  }
 }
