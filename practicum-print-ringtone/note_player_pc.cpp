@@ -1,64 +1,60 @@
 #include "hwlib.hpp"
 #include "note_player_pc.hpp"
-#include "iostream"
 
+const char* note_player_pc::find_note(int f) {
+    switch (f) {
+        case 0:
+            return "silence";
+        case 440:
+            return "A4";
+        case 466:
+            return "A4s";
+        case 494:
+            return "B4";
+        case 523:
+            return "C5";
+        case 554:
+            return "C5s";
+        case 587:
+            return "D5";
+        case 622:
+            return "D5s";
+        case 659:
+            return "E5";
+        case 698:
+            return "F5";
+        case 740:
+            return "F5s";
+        case 784:
+            return "G5";
+        case 830:
+            return "G5s";
+        case 880:
+            return "A5";
+        case 932:
+            return "A5s";
+        case 987:
+            return "B5";
+        default:
+            return "error";
+    }
+}
 
 void note_player_pc::play(const note& n) {
-    if (n.frequency == 0) {
-        hwlib::wait_us( n.duration );
+    hwlib::wait_ms( 100 );
+    int f = n.frequency;
+
+    if (f < 0) {
+        hwlib::cout << "error" << hwlib::endl;
+        return;
+    } else if (f < 988) {
+        hwlib::cout << find_note( f ) << hwlib::endl;
+//        hwlib::cout << "note found!" << hwlib::endl;
+        return;
 
     } else {
-        auto end = hwlib::now_us() + n.duration;
-        do {
-            static const int f = n.frequency;
-            switch(f){
-                case 440:
-                    hwlib::cout << "A4" << hwlib::endl;
-                    break;
-                case 466:
-                    hwlib::cout << "A4s" << hwlib::endl;
-                    break;
-                case 494:
-                    hwlib::cout << "B4" << hwlib::endl;
-                    break;
-                case 523:
-                    hwlib::cout << "C5" << hwlib::endl;
-                    break;
-                case 554:
-                    hwlib::cout << "C5s" << hwlib::endl;
-                    break;
-                case 587:
-                    hwlib::cout << "D5" << hwlib::endl;
-                    break;
-                case 622:
-                    hwlib::cout << "D5s" << hwlib::endl;
-                    break;
-                case 659:
-                    hwlib::cout << "E5" << hwlib::endl;
-                    break;
-                case 698:
-                    hwlib::cout << "F5" << hwlib::endl;
-                    break;
-                case 740:
-                    hwlib::cout << "F5s" << hwlib::endl;
-                    break;
-                case 784:
-                    hwlib::cout << "G5" << hwlib::endl;
-                    break;
-                case 830:
-                    hwlib::cout << "G5s" << hwlib::endl;
-                    break;
-                case 880:
-                    hwlib::cout << "A5" << hwlib::endl;
-                    break;
-                case 932:
-                    hwlib::cout << "A5s" << hwlib::endl;
-                    break;
-                case 987:
-                    hwlib::cout << "B5" << hwlib::endl;
-                    break;
-
-            }
-        } while (end > hwlib::now_us());
+        hwlib::cout << find_note( f / 2 ) << hwlib::endl;
+//        hwlib::cout << "note found!" << hwlib::endl;
+        return;
     }
 }
