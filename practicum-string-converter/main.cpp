@@ -2,6 +2,7 @@
 #include "note_player_gpio.hpp"
 #include "note_player_pc.hpp"
 #include "fur_elise.hpp"
+#include "melody.cpp"
 #include "rtttl_player.hpp"
 
 const char sos[] = "SOS:d=4,o=5,b=60:a,p,a,p,a,p,2a.,p,2a.,p,2a.,p,a,p,a,p,a";
@@ -14,18 +15,18 @@ int main(void) {
 
     namespace target = hwlib::target;
     auto lsp = target::pin_out( target::pins::d7 );
-    auto p = note_player_pc();
+    auto p = note_player_gpio(lsp);
     hwlib::wait_ms( 100 );
 
     HWLIB_TRACE;
 
-    if (0) {
+    if (1) {
         auto fe = fur_elise();
         fe.play( p );
     }
 
     if (0) {rtttl_play( p, sos );}
-    if (1) {rtttl_play( p, let_it_be );}
+    if (0) {rtttl_play( p, let_it_be );}
     if (0) {rtttl_play( p, muppets );}
     if (0) {rtttl_play( p, rickroll );}
     if (0) {rtttl_play( p, one );}
