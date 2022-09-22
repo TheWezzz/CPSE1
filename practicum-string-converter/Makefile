@@ -24,6 +24,8 @@ SOURCES += rtttl_player.cpp
 HEADERS += note_player_pc.hpp
 SOURCES += note_player_pc.cpp
 
+SOURCES += melody.cpp
+
 # other places to look for files for this project
 SEARCH  := 
 
