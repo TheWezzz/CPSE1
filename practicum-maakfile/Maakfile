@@ -1,0 +1,19 @@
+build: generator.exe
+
+generator.exe : generator.o fur_elise.o melody.o note.o note_player.o note_player_gpio.o note_player_pc.o rtttl_player.o
+	g++ -std=c++17 generator.o melody.o note_player_gpio.o note_player_pc.o rtttl_player.o -o generator.exe
+
+generator.o : generator.cpp fur_elise.hpp hwlib.hpp note_player_gpio.hpp note_player_pc.hpp fur_elise.hpp melody.cpp rtttl_player.hpp
+	g++ -std=c++17 -c generator.cpp -o generator.o
+
+melody.o : melody.cpp melody.hpp note_player.hpp
+	g++ -std=c++17 -c melody.cpp -o melody.o
+
+note_player_gpio.o: note_player_gpio.cpp note_player_gpio.hpp note_player.hpp hwlib.hpp
+	g++ -std=c++17 -c note_player_gpio.cpp -o note_player_gpio.o
+
+note_player_pc.o: note_player_pc.cpp note_player_pc.hpp note_player.hpp hwlib.hpp
+	g++ -std=c++17 -c note_player_pc.cpp -o note_player_pc.o
+
+rtttl_player.o: rtttl_player.cpp rtttl_player.hpp hwlib.hpp
+	g++ -std=c++17 -c rtttl_player.cpp -o rtttl_player.o
