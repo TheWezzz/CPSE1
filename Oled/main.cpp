@@ -1,4 +1,5 @@
 #include "hwlib.hpp"
+#include "wijzer.h"
 #include "cmath"
 #include "ctime"
 
@@ -44,15 +45,15 @@ constexpr hwlib::xy calc_dx_dy_from_center_of_circle(const int radius, const int
 }
 
 // returns absolute position of any 60 positions on a clock
-constexpr hwlib::xy clock_pos_from_minute(const int minute, const hwlib::xy clock_center, const hwlib::xy table_clock_pos[15]){
+constexpr hwlib::xy clock_pos_from_minute(const int& minute, const hwlib::xy& clock_center, const hwlib::xy table[15]){
     if (minute >= 0 && minute <= 14) {
-        return hwlib::xy(clock_center.x + table_clock_pos[minute].x, clock_center.y - table_clock_pos[minute].y );
+        return hwlib::xy(clock_center.x + table[minute].x, clock_center.y - table[minute].y );
     }else if(minute >= 15 && minute <= 29){
-        return hwlib::xy(clock_center.x + table_clock_pos[minute-15].y, clock_center.y + table_clock_pos[minute-15].x );
+        return hwlib::xy(clock_center.x + table[minute-15].y, clock_center.y + table[minute-15].x );
     }else if(minute >= 30 && minute <= 44){
-        return hwlib::xy(clock_center.x - table_clock_pos[minute-30].x, clock_center.y + table_clock_pos[minute-30].y );
+        return hwlib::xy(clock_center.x - table[minute-30].x, clock_center.y + table[minute-30].y );
     }else if(minute >= 45 && minute <= 59){
-        return hwlib::xy(clock_center.x - table_clock_pos[minute-45].y, clock_center.y - table_clock_pos[minute-45].x );
+        return hwlib::xy(clock_center.x - table[minute-45].y, clock_center.y - table[minute-45].x );
     }else{
         return hwlib::xy(0, 0);
     }
@@ -67,6 +68,7 @@ int main(void) {
     auto i2c_bus = hwlib::i2c_bus_bit_banged_scl_sda( scl, sda );
 
     auto display = hwlib::glcd_oled( i2c_bus, 0x3c );
+    display.clear();
 
     // clock properties
     const auto clock_center = hwlib::xy( 60, 30 );
@@ -90,25 +92,43 @@ int main(void) {
             calc_dx_dy_from_center_of_circle( clock_radius, 78 ),
             calc_dx_dy_from_center_of_circle( clock_radius, 84 )
     };
-    hwlib::line wijzer_seconds = hwlib::line( clock_center, clock_pos_from_minute(11, clock_center, table_clock_pos) );
+
+    //wijzers
+    wijzer seconds = wijzer( display, clock_center, clock_pos_from_minute(0, clock_center, table_clock_pos) );
 
     // draw center
-    display.clear();
     display.write( clock_center );
     display.flush();
 
+    // draw clock
     for (auto i = 0; i <= 59; i += 5) {
         display.write( clock_pos_from_minute( i, clock_center, table_clock_pos ));
         display.flush();
     }
 
-//    wijzer_seconds = hwlib::line( clock_center, clock_pos_from_minute(12, clock_center, table_clock_pos) );
-    wijzer_seconds.draw( display );
-    display.flush();
+//    seconds.change_endpoint( clock_pos_from_minute(18, clock_center, table_clock_pos));
+//    seconds.print();
+//    display.flush();
 
+    // draw wijzers
 //    int zero = hwlib::now_us();
-//    while (true) {
-//
-//        wijzer_seconds.draw( display );
-//    }
+    unsigned int i = 1;
+    while (true) {
+        display.clear();
+
+        display.write( clock_center );
+
+        for (auto i = 0; i <= 59; i += 5) {
+            display.write( clock_pos_from_minute( i, clock_center, table_clock_pos ));
+        }
+
+        seconds.print();
+
+        seconds.change_endpoint(clock_pos_from_minute(i % 60, clock_center, table_clock_pos));
+        i++;
+
+        display.flush();
+
+        hwlib::wait_ms(1000);
+    }
 }
