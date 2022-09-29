@@ -48,22 +48,40 @@ constexpr hwlib::xy calc_dx_dy_from_center_of_circle(const int radius, const int
 // returns absolute position of any 60 positions on a clock
 constexpr hwlib::xy clock_pos_from_minute(const int& minute, const hwlib::xy& clock_center, const hwlib::xy table[15], bool short_length) {
     hwlib::xy result;
-    if (minute >= 0 && minute <= 14) {
-        result = hwlib::xy( clock_center.x + table[minute].x, clock_center.y - table[minute].y );
-    } else if (minute >= 15 && minute <= 29) {
-        result = hwlib::xy( clock_center.x + table[minute - 15].y, clock_center.y + table[minute - 15].x );
-    } else if (minute >= 30 && minute <= 44) {
-        result = hwlib::xy( clock_center.x - table[minute - 30].x, clock_center.y + table[minute - 30].y );
-    } else if (minute >= 45 && minute <= 59) {
-        result = hwlib::xy( clock_center.x - table[minute - 45].y, clock_center.y - table[minute - 45].x );
+    if (short_length) {
+        if (minute >= 0 && minute <= 14) {
+            result = hwlib::xy( clock_center.x + 0.7 * table[minute].x, clock_center.y - 0.7 * table[minute].y );
+        } else if (minute >= 15 && minute <= 29) {
+            result = hwlib::xy( clock_center.x + 0.7 * table[minute - 15].y, clock_center.y + 0.7 * table[minute - 15].x );
+        } else if (minute >= 30 && minute <= 44) {
+            result = hwlib::xy( clock_center.x - 0.7 * table[minute - 30].x, clock_center.y + 0.7 * table[minute - 30].y );
+        } else if (minute >= 45 && minute <= 59) {
+            result = hwlib::xy( clock_center.x - 0.7 * table[minute - 45].y, clock_center.y - 0.7 * table[minute - 45].x );
+        } else {
+            result = hwlib::xy( 0, 0 );
+        }
     } else {
-        result = hwlib::xy( 0, 0 );
+        if (minute >= 0 && minute <= 14) {
+            result = hwlib::xy( clock_center.x + table[minute].x, clock_center.y - table[minute].y );
+        } else if (minute >= 15 && minute <= 29) {
+            result = hwlib::xy( clock_center.x + table[minute - 15].y, clock_center.y + table[minute - 15].x );
+        } else if (minute >= 30 && minute <= 44) {
+            result = hwlib::xy( clock_center.x - table[minute - 30].x, clock_center.y + table[minute - 30].y );
+        } else if (minute >= 45 && minute <= 59) {
+            result = hwlib::xy( clock_center.x - table[minute - 45].y, clock_center.y - table[minute - 45].x );
+        } else {
+            result = hwlib::xy( 0, 0 );
+        }
     }
-    if(short_length) return result; else return result;
+    return result;
 }
 
 int main(void) {
     namespace target = hwlib::target;
+
+    // buttons
+    auto b1 = target::pin_in( target::pins::a10 );
+    auto b2 = target::pin_in( target::pins::a11 );
 
     // display configuration
     auto scl = target::pin_oc( target::pins::scl );
@@ -74,8 +92,8 @@ int main(void) {
     display.clear();
 
     // clock properties
-    const auto clock_center = hwlib::xy( 60, 30 );
-    const auto clock_radius = 25;
+    const auto clock_center = hwlib::xy( 90, 30 );
+    const auto clock_radius = 30;
 
     // lookup-table for first quarter of a clock (centerpoint still not defined)
     const hwlib::xy table_clock_pos[15] = {
@@ -96,11 +114,12 @@ int main(void) {
             calc_dx_dy_from_center_of_circle( clock_radius, 84 )
     };
 
-    //wijzers
+    // wijzers
     wijzer seconds = wijzer( display, clock_center, clock_pos_from_minute( 0, clock_center, table_clock_pos, false ));
     wijzer minutes = wijzer( display, clock_center, clock_pos_from_minute( 0, clock_center, table_clock_pos, false ));
     wijzer hours = wijzer( display, clock_center, clock_pos_from_minute( 0, clock_center, table_clock_pos, true ));
-
+    unsigned int offset_minutes = 0;
+    unsigned int offset_hours = 0;
 
     // draw center
     display.write( clock_center );
@@ -115,10 +134,12 @@ int main(void) {
     // loop
     const int zero = hwlib::now_us();
     while (true) {
+        // check real time and skip if we're not in a rounded second
         long long int ms_from_zero = (hwlib::now_us() - zero) / 1000;
-        if(ms_from_zero % 1000 != 0){
+        if (ms_from_zero % 100 != 0) {
             continue;
-        }else {
+        } else {
+            // update display
             display.clear();
 
             display.write( clock_center );
@@ -127,16 +148,22 @@ int main(void) {
                 display.write( clock_pos_from_minute( i, clock_center, table_clock_pos, false ));
             }
 
+            seconds.change_endpoint( clock_pos_from_minute((ms_from_zero / 100) % 60, clock_center, table_clock_pos, false ));
+            minutes.change_endpoint( clock_pos_from_minute((ms_from_zero / 100 / 60) % 60 + offset_minutes, clock_center, table_clock_pos, false ));
+            hours.change_endpoint( clock_pos_from_minute((ms_from_zero / 100 / 60 / 12) % 60 + offset_hours, clock_center, table_clock_pos, true ));
+
             seconds.print();
             minutes.print();
             hours.print();
 
-
-            seconds.change_endpoint( clock_pos_from_minute( (ms_from_zero / 1000) % 60, clock_center, table_clock_pos, false ));
-            minutes.change_endpoint( clock_pos_from_minute( (ms_from_zero / 1000 / 60) % 60, clock_center, table_clock_pos, false ));
-            hours.change_endpoint( clock_pos_from_minute( (ms_from_zero / 1000 / 60 / 12) % 60, clock_center, table_clock_pos, true ));
-
             display.flush();
+        }
+        // read buttons
+        if (b1.read()) {
+            offset_minutes++;
+        }
+        if (b2.read()) {
+            offset_hours++;
         }
     }
 }
