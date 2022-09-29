@@ -37,26 +37,29 @@ constexpr double sinus(double radians) {
             + pow( radians, 9 ) / fac( 9 );
 
 }
+
 // calculate x and y difference from center point to edge of circle
 constexpr hwlib::xy calc_dx_dy_from_center_of_circle(const int radius, const int degrees) {
     double deltaX = radius * sinus( radians_from_degrees( degrees ));
     double deltaY = radius * sinus( radians_from_degrees( 90 - degrees ));
-    return hwlib::xy(deltaX, deltaY);
+    return hwlib::xy( deltaX, deltaY );
 }
 
 // returns absolute position of any 60 positions on a clock
-constexpr hwlib::xy clock_pos_from_minute(const int& minute, const hwlib::xy& clock_center, const hwlib::xy table[15]){
+constexpr hwlib::xy clock_pos_from_minute(const int& minute, const hwlib::xy& clock_center, const hwlib::xy table[15], bool short_length) {
+    hwlib::xy result;
     if (minute >= 0 && minute <= 14) {
-        return hwlib::xy(clock_center.x + table[minute].x, clock_center.y - table[minute].y );
-    }else if(minute >= 15 && minute <= 29){
-        return hwlib::xy(clock_center.x + table[minute-15].y, clock_center.y + table[minute-15].x );
-    }else if(minute >= 30 && minute <= 44){
-        return hwlib::xy(clock_center.x - table[minute-30].x, clock_center.y + table[minute-30].y );
-    }else if(minute >= 45 && minute <= 59){
-        return hwlib::xy(clock_center.x - table[minute-45].y, clock_center.y - table[minute-45].x );
-    }else{
-        return hwlib::xy(0, 0);
+        result = hwlib::xy( clock_center.x + table[minute].x, clock_center.y - table[minute].y );
+    } else if (minute >= 15 && minute <= 29) {
+        result = hwlib::xy( clock_center.x + table[minute - 15].y, clock_center.y + table[minute - 15].x );
+    } else if (minute >= 30 && minute <= 44) {
+        result = hwlib::xy( clock_center.x - table[minute - 30].x, clock_center.y + table[minute - 30].y );
+    } else if (minute >= 45 && minute <= 59) {
+        result = hwlib::xy( clock_center.x - table[minute - 45].y, clock_center.y - table[minute - 45].x );
+    } else {
+        result = hwlib::xy( 0, 0 );
     }
+    if(short_length) return result; else return result;
 }
 
 int main(void) {
@@ -94,7 +97,10 @@ int main(void) {
     };
 
     //wijzers
-    wijzer seconds = wijzer( display, clock_center, clock_pos_from_minute(0, clock_center, table_clock_pos) );
+    wijzer seconds = wijzer( display, clock_center, clock_pos_from_minute( 0, clock_center, table_clock_pos, false ));
+    wijzer minutes = wijzer( display, clock_center, clock_pos_from_minute( 0, clock_center, table_clock_pos, false ));
+    wijzer hours = wijzer( display, clock_center, clock_pos_from_minute( 0, clock_center, table_clock_pos, true ));
+
 
     // draw center
     display.write( clock_center );
@@ -102,33 +108,35 @@ int main(void) {
 
     // draw clock
     for (auto i = 0; i <= 59; i += 5) {
-        display.write( clock_pos_from_minute( i, clock_center, table_clock_pos ));
+        display.write( clock_pos_from_minute( i, clock_center, table_clock_pos, false ));
         display.flush();
     }
 
-//    seconds.change_endpoint( clock_pos_from_minute(18, clock_center, table_clock_pos));
-//    seconds.print();
-//    display.flush();
-
-    // draw wijzers
-//    int zero = hwlib::now_us();
-    unsigned int i = 1;
+    // loop
+    const int zero = hwlib::now_us();
     while (true) {
-        display.clear();
+        long long int ms_from_zero = (hwlib::now_us() - zero) / 1000;
+        if(ms_from_zero % 1000 != 0){
+            continue;
+        }else {
+            display.clear();
 
-        display.write( clock_center );
+            display.write( clock_center );
 
-        for (auto i = 0; i <= 59; i += 5) {
-            display.write( clock_pos_from_minute( i, clock_center, table_clock_pos ));
+            for (auto i = 0; i <= 59; i += 5) {
+                display.write( clock_pos_from_minute( i, clock_center, table_clock_pos, false ));
+            }
+
+            seconds.print();
+            minutes.print();
+            hours.print();
+
+
+            seconds.change_endpoint( clock_pos_from_minute( (ms_from_zero / 1000) % 60, clock_center, table_clock_pos, false ));
+            minutes.change_endpoint( clock_pos_from_minute( (ms_from_zero / 1000 / 60) % 60, clock_center, table_clock_pos, false ));
+            hours.change_endpoint( clock_pos_from_minute( (ms_from_zero / 1000 / 60 / 12) % 60, clock_center, table_clock_pos, true ));
+
+            display.flush();
         }
-
-        seconds.print();
-
-        seconds.change_endpoint(clock_pos_from_minute(i % 60, clock_center, table_clock_pos));
-        i++;
-
-        display.flush();
-
-        hwlib::wait_ms(1000);
     }
 }
