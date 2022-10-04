@@ -46,7 +46,8 @@ constexpr hwlib::xy calc_dx_dy_from_center_of_circle(const int radius, const int
 }
 
 // returns absolute position of any 60 positions on a clock
-constexpr hwlib::xy clock_pos_from_minute(const int& minute, const hwlib::xy& clock_center, const hwlib::xy table[15], bool short_length) {
+constexpr hwlib::xy clock_pos_from_minute(int& minute, const hwlib::xy& clock_center, const hwlib::xy table[15], const bool short_length) {
+    minute = minute % 60;
     hwlib::xy result;
     if (short_length) {
         if (minute >= 0 && minute <= 14) {
@@ -92,7 +93,7 @@ int main(void) {
     display.clear();
 
     // clock properties
-    const auto clock_center = hwlib::xy( 90, 30 );
+    const auto clock_center = hwlib::xy( 60, 30 );
     const auto clock_radius = 30;
 
     // lookup-table for first quarter of a clock (centerpoint still not defined)
@@ -115,9 +116,12 @@ int main(void) {
     };
 
     // wijzers
-    wijzer seconds = wijzer( display, clock_center, clock_pos_from_minute( 0, clock_center, table_clock_pos, false ));
-    wijzer minutes = wijzer( display, clock_center, clock_pos_from_minute( 0, clock_center, table_clock_pos, false ));
-    wijzer hours = wijzer( display, clock_center, clock_pos_from_minute( 0, clock_center, table_clock_pos, true ));
+    int seconds_pos = 0;
+    int minutes_pos = 0;
+    int hours_pos = 0;
+    wijzer seconds = wijzer( display, clock_center, clock_pos_from_minute( seconds_pos, clock_center, table_clock_pos, false ));
+    wijzer minutes = wijzer( display, clock_center, clock_pos_from_minute( minutes_pos, clock_center, table_clock_pos, false ));
+    wijzer hours = wijzer( display, clock_center, clock_pos_from_minute( hours_pos, clock_center, table_clock_pos, true ));
     unsigned int offset_minutes = 0;
     unsigned int offset_hours = 0;
 
@@ -134,7 +138,7 @@ int main(void) {
     // loop
     const int zero = hwlib::now_us();
     while (true) {
-        // check real time and skip if we're not in a rounded second
+        // check real time and skip if we're not in a tenth of a second
         long long int ms_from_zero = (hwlib::now_us() - zero) / 1000;
         if (ms_from_zero % 100 != 0) {
             continue;
@@ -148,9 +152,13 @@ int main(void) {
                 display.write( clock_pos_from_minute( i, clock_center, table_clock_pos, false ));
             }
 
-            seconds.change_endpoint( clock_pos_from_minute((ms_from_zero / 100) % 60, clock_center, table_clock_pos, false ));
-            minutes.change_endpoint( clock_pos_from_minute((ms_from_zero / 100 / 60) % 60 + offset_minutes, clock_center, table_clock_pos, false ));
-            hours.change_endpoint( clock_pos_from_minute((ms_from_zero / 100 / 60 / 12) % 60 + offset_hours, clock_center, table_clock_pos, true ));
+            seconds_pos = (ms_from_zero / 1000);
+            minutes_pos = (ms_from_zero / 1000 / 60) + offset_minutes;
+            hours_pos = (ms_from_zero / 1000 / 60 / 12) + offset_hours;
+
+            seconds.change_endpoint( clock_pos_from_minute(seconds_pos, clock_center, table_clock_pos, false ));
+            minutes.change_endpoint( clock_pos_from_minute(minutes_pos, clock_center, table_clock_pos, false ));
+            hours.change_endpoint( clock_pos_from_minute(hours_pos, clock_center, table_clock_pos, true ));
 
             seconds.print();
             minutes.print();
@@ -158,7 +166,7 @@ int main(void) {
 
             display.flush();
         }
-        // read buttons
+        // read buttons and apply offset
         if (b1.read()) {
             offset_minutes++;
         }
