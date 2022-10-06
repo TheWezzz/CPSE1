@@ -153,8 +153,8 @@ int main(void) {
             }
 
             seconds_pos = (ms_from_zero / 1000);
-            minutes_pos = (ms_from_zero / 1000 / 60) + offset_minutes;
-            hours_pos = (ms_from_zero / 1000 / 60 / 12) + offset_hours;
+            minutes_pos = seconds_pos/60 + offset_minutes;
+            hours_pos =   minutes_pos/12 + offset_hours;
 
             seconds.change_endpoint( clock_pos_from_minute(seconds_pos, clock_center, table_clock_pos, false ));
             minutes.change_endpoint( clock_pos_from_minute(minutes_pos, clock_center, table_clock_pos, false ));
