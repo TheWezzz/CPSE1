@@ -9,10 +9,10 @@
 #############################################################################
 
 # source files in this project (main.cpp is automatically assumed)
-SOURCES := wijzer.cpp
+SOURCES := set.cpp
 
 # header files in this project
-HEADERS := wijzer.h
+HEADERS := set.h
 
 # other places to look for files for this project
 SEARCH  := 
@@ -20,4 +20,4 @@ SEARCH  :=
 # set REATIVE to the next higher directory 
 # and defer to the Makefile.due there
 RELATIVE := $(RELATIVE)../
-include $(RELATIVE)Makefile.due
+include $(RELATIVE)Makefile.native
