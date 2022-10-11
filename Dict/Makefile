@@ -9,7 +9,7 @@
 #############################################################################
 
 # source files in this project (main.cpp is automatically assumed)
-SOURCES := set.cpp
+SOURCES :=
 
 # header files in this project
 HEADERS := set.h

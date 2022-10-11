@@ -16,10 +16,11 @@ public:
         }
     }
 
+    //werkt niet
     std::array<int, 10> get_occupied_entries() {
         unsigned int count = 0;
         std::array<int, 10> res;
-        for (auto i: occupied) {
+        for (auto i=0; i<=9; i++) {
             if (occupied[i]) {
                 res[count] = entries[i];
                 count++;
@@ -30,7 +31,7 @@ public:
 
     void add(int x) {
         if (contains( x )) return;
-        for (auto i: occupied) {
+        for (auto i=0; i<=9; i++) {
             if (!occupied[i]) {
                 entries[i] = x;
                 occupied[i] = true;
@@ -40,7 +41,7 @@ public:
     }
 
     void remove(int x) {
-        for (auto i: entries) {
+        for (auto i=0; i<=9; i++) {
             if (entries[i] == x) {
                 occupied[i] = false;
                 return;
@@ -49,7 +50,7 @@ public:
     }
 
     bool contains(int x) {
-        for (auto i: entries) {
+        for (auto i=0; i<=9; i++) {
             if (entries[i] == x) return true;
         }
         return false;
