@@ -1,10 +1,4 @@
+#define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
+#include "catch.hpp"
 #include "set.h"
 #include "iostream"
-
-int main() {
-    set test;
-    test.add(400);
-    test.add(6);
-    test.remove(400);
-    std::cout << test.get_occupied_entries()[0];
-}
