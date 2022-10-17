@@ -15,6 +15,7 @@ public:
             occupied[i] = false;
         }
     }
+    unsigned int size = 0;
 
     std::array<int, 10> get_occupied_entries() {
         unsigned int count = 0;
@@ -33,6 +34,7 @@ public:
         for (auto i = 0; i <= 9; i++) {
             if (!occupied[i]) {
                 entries[i] = x;
+                size++;
                 occupied[i] = true;
                 return;
             }
@@ -42,6 +44,7 @@ public:
     void remove(int x) {
         for (auto i = 0; i <= 9; i++) {
             if (entries[i] == x) {
+                size--;
                 occupied[i] = false;
                 return;
             }
@@ -64,7 +67,7 @@ public:
 void operator<<(std::ostream& lhs, set& rhs) {
     std::array<int, 10> x = rhs.get_occupied_entries();
 
-    for (auto i = 0; i <= 9; i++) {
+    for (unsigned int i = 0; i <= rhs.size-1; i++) {
         lhs << x[i] << std::endl;
     }
     return;
