@@ -2,6 +2,7 @@
 #define set_h
 
 #include "array"
+#include "vector"
 #include "iostream"
 
 class set {
@@ -15,14 +16,15 @@ public:
             occupied[i] = false;
         }
     }
+
     unsigned int size = 0;
 
-    std::array<int, 10> get_occupied_entries() {
+    std::vector<int> get_occupied_entries() {
         unsigned int count = 0;
-        std::array<int, 10> res;
-        for (auto i = 0; i <= 9; i++) {
+        std::vector<int> res;
+        for (unsigned int i = 0; i <= 9; i++) {
             if (occupied[i]) {
-                res[count] = entries[i];
+                res.push_back(entries[i]);
                 count++;
             }
         }
@@ -53,10 +55,9 @@ public:
 
     bool contains(int x) {
         for (auto i = 0; i <= 9; i++) {
-            if(!occupied[i]) {
+            if (!occupied[i]) {
                 continue;
-            }else if (entries[i] == int(x)) {
-                std::cout << "error. " << x << " already exists!" << std::endl;
+            } else if (entries[i] == int( x )) {
                 return true;
             }
         }
@@ -65,10 +66,10 @@ public:
 };
 
 void operator<<(std::ostream& lhs, set& rhs) {
-    std::array<int, 10> x = rhs.get_occupied_entries();
+    std::vector<int> x = rhs.get_occupied_entries();
 
-    for (unsigned int i = 0; i <= rhs.size-1; i++) {
-        lhs << x[i] << std::endl;
+    for (unsigned int i = 0; i <= x.size()-1; i++) {
+        lhs << x.at( i ) << std::endl;
     }
     return;
 }
