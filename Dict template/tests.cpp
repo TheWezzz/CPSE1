@@ -1,9 +1,9 @@
 #include "catch.hpp"
 #include "set.h"
 
-//////////////////////////////////////////////
+/////////////////////////////////////////////
 TEST_CASE( "add" ){
-set test;
+set<int, 10> test;
 test.add(5);
 
 std::vector<int> test_vect = test.get_occupied_entries();
@@ -14,7 +14,7 @@ REQUIRE(test_vect == test_expect);
 
 //////////////////////////////////////////////
 TEST_CASE( "add twice" ){
-set test;
+set<int, 10> test;
 test.add(5);
 test.add(5);
 
@@ -26,7 +26,7 @@ REQUIRE(test_vect == test_expect);
 
 //////////////////////////////////////////////
 TEST_CASE( "remove" ){
-set test;
+set<int, 10> test;
 test.add(5);
 test.add(50);
 test.remove(5);
@@ -39,7 +39,7 @@ REQUIRE(test_vect == test_expect);
 
 //////////////////////////////////////////////
 TEST_CASE( "remove non-existent" ){
-set test;
+set<int, 10> test;
 test.add(5);
 test.add(50);
 test.remove(4);
@@ -52,7 +52,7 @@ REQUIRE(test_vect == test_expect);
 
 //////////////////////////////////////////////
 TEST_CASE( "remove and replace" ){
-set test;
+set<int, 10> test;
 test.add(5);
 test.add(50);
 test.remove(5);
@@ -66,7 +66,7 @@ REQUIRE(test_vect == test_expect);
 
 //////////////////////////////////////////////
 TEST_CASE( "contains" ){
-set test;
+set<int, 10> test;
 test.add(5);
 test.add(50);
 
@@ -82,7 +82,7 @@ REQUIRE(test_bool2 == test_expect2);
 
 //////////////////////////////////////////////
 TEST_CASE( "too many numbers" ){
-set test;
+set<int, 10> test;
 test.add(5);
 test.add(50);
 test.add(4);
@@ -103,7 +103,7 @@ REQUIRE(test_vect == test_expect);
 
 //////////////////////////////////////////////
 TEST_CASE( "too less numbers" ){
-set test;
+set<int, 10> test;
 test.add(5);
 test.add(50);
 test.remove(5);
@@ -117,7 +117,7 @@ REQUIRE(test_vect == test_expect);
 
 //////////////////////////////////////////////
 TEST_CASE( "too many numbers, multiple remove and replace, add twice" ){
-set test;
+set<int, 10> test;
 test.add(5);
 test.add(50);
 test.add(4);
